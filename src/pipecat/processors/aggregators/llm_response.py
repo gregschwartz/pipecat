@@ -27,6 +27,8 @@ from pipecat.processors.aggregators.openai_llm_context import (
 )
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
 
+from loguru import logger
+
 
 class LLMResponseAggregator(FrameProcessor):
     def __init__(
@@ -176,6 +178,9 @@ class LLMResponseAggregator(FrameProcessor):
 
 class LLMAssistantResponseAggregator(LLMResponseAggregator):
     def __init__(self, messages: List[dict] = []):
+        logger.warning(
+            "DEPRECATED: `LLMAssistantResponseAggregator` is deprecated use `OpenAILLMContext` instead."
+        )
         super().__init__(
             messages=messages,
             role="assistant",
@@ -188,6 +193,9 @@ class LLMAssistantResponseAggregator(LLMResponseAggregator):
 
 class LLMUserResponseAggregator(LLMResponseAggregator):
     def __init__(self, messages: List[dict] = []):
+        logger.warning(
+            "DEPRECATED: `LLMUserResponseAggregator` is deprecated use `OpenAILLMContext` instead."
+        )
         super().__init__(
             messages=messages,
             role="user",
