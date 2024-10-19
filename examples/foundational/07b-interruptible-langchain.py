@@ -15,10 +15,7 @@ from pipecat.frames.frames import LLMMessagesFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.runner import PipelineRunner
 from pipecat.pipeline.task import PipelineParams, PipelineTask
-from pipecat.processors.aggregators.llm_response import (
-    LLMAssistantResponseAggregator,
-    LLMUserResponseAggregator,
-)
+from pipecat.processors.aggregators.openai_llm_context import OpenAILLMContext
 from pipecat.processors.frameworks.langchain import LangchainProcessor
 from pipecat.services.cartesia import CartesiaTTSService
 from pipecat.transports.services.daily import DailyParams, DailyTransport
@@ -91,17 +88,17 @@ async def main():
         )
         lc = LangchainProcessor(history_chain)
 
-        tma_in = LLMUserResponseAggregator()
-        tma_out = LLMAssistantResponseAggregator()
+        context = OpenAILLMContext(messages)
+        context_aggregator = llm.create_context_aggregator(context)
 
         pipeline = Pipeline(
             [
                 transport.input(),  # Transport user input
-                tma_in,  # User responses
+                context_aggregator.user(),  # User responses
                 lc,  # Langchain
                 tts,  # TTS
                 transport.output(),  # Transport bot output
-                tma_out,  # Assistant spoken responses
+                context_aggregator.assistant(),  # Assistant spoken responses
             ]
         )
 
